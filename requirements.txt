@@ -1,0 +1,5 @@
+streamlit
+spacy
+PyMuPDF>=1.23.20
+pdfplumber
+python-docx
