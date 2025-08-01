@@ -1,0 +1,47 @@
+name: build-binaries
+
+on:
+  push:
+    tags: ["v*"]            # build only when you tag a commit  e.g.  v1.0
+  workflow_dispatch:        # …or run manually from the Actions tab
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build EXE with PyInstaller
+        run: |
+          pyinstaller --onefile --noconsole --name cv-anonymiser app.py
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cv-anonymiser-windows
+          path: dist/cv-anonymiser.exe
+
+  mac:
+    runs-on: macos-14          # comment this job out if you only need Windows
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+          pyinstaller --onefile --windowed --name cv-anonymiser app.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cv-anonymiser-macos
+          path: dist/cv-anonymiser
